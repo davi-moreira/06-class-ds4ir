@@ -1,0 +1,13 @@
+base
+ggplot2
+gganimate
+dplyr
+gifski
+tidyverse
+tibble
+tidyr
+readr
+purrr
+stringr
+forcats
+here

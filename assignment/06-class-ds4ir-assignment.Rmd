@@ -1,0 +1,47 @@
+---
+title: "06-class-ds4ir-assignment"
+author: "seu nome aqui"
+date: "`r format(Sys.time(), '%d-%m-%Y')`"
+output: 
+  html_document:
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(jtools)
+```
+
+
+
+# Assignment {-}
+
+1. Valendo-se do World Values Survey, responda: qual é o percentual de pessoas que confia em partidos políticos na Argentina? Você diria que o número é estatisticamente diferente do que observamos Brasil? 
+
+O code chunk abaixo já traz o código para carregar a base de dados, e o livro de códigos está disponível na pasta `data`.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+wvs <- readRDS(here("./data/EVS_WVS_Cross-National_Wave_7_joint_core_R_v1_1.rds"))
+```
+
+
+2. identifique o país com maior nível de desconfiança na Imprensa, e construa o intervalo de 95% em torno da média. 
+
+
+
+3. Escreva uma frase interpretando as estimativas encontradas na pergunta 2. Os valores da média e do intervalo de confiança devem ser reportados de maneira dinâmica, por meio de objetos que você criou na pergunta anterior. 
+
+
+4. Nos modelos que rodamos durante a aula para compreender a ascensão do Partido Nazista, utilizamos o número absoluto de votos em cada distrito como variável dependente. Porém, pode-se fazer o argumento de que o mais importante é a proporção dos votos que o Partido Nazista ganhou dentro de cada distrito, e não o número total.
+
+Utilize o banco de dados para testar essa hipótese, fazendo as transformações necessárias. Os resultados são diferentes?
+
+
+5. Produza um documento .html com o resultado de sua análise
+
+**Observação**: Não se esqueça de colocar seu nome.
+
+
+

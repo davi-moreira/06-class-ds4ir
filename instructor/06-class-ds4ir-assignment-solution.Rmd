@@ -1,0 +1,85 @@
+---
+title: "06-class-ds4ir-assignment"
+author: "seu nome aqui"
+date: "`r format(Sys.time(), '%d-%m-%Y')`"
+output: 
+  html_document:
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+library(tidyverse)
+library(jtools)
+```
+
+
+
+# Assignment {-}
+
+1. Valendo-se do World Values Survey, responda: qual é o percentual de pessoas que confia em partidos políticos na Argentina? Você diria que o número é estatisticamente diferente do que observamos Brasil? 
+
+O code chunk abaixo já traz o código para carregar a base de dados, e o livro de códigos está disponível na pasta `data`.
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+wvs <- readRDS(here("./data/EVS_WVS_Cross-National_Wave_7_joint_core_R_v1_1.rds"))
+
+partidos_arg <- wvs %>% 
+  select(C_COW_ALPHA, A_YEAR, Q72) %>% 
+  filter(C_COW_ALPHA == "ARG") %>% 
+  mutate(confia_em_partidos = case_when(Q72 %in% c(1, 2) ~ 1,
+                                        TRUE ~ 0)) %>% 
+  summarise(soma_confiam = sum(confia_em_partidos), 
+            total_entrevistados = n(),
+            prop = round(soma_confiam/total_entrevistados * 100, 2))
+
+prop.test(partidos_arg$soma_confiam, partidos_arg$total_entrevistados, .5)
+
+```
+
+
+2. identifique o país com maior nível de desconfiança na Imprensa, e construa o intervalo de 95% em torno da média. 
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+imprensa <- wvs %>% 
+  select(C_COW_ALPHA, A_YEAR, Q66) %>% 
+  mutate(n_confia_na_imp = case_when(Q66 %in% c(1, 2) ~ 0,
+                                        TRUE ~ 1)) %>% 
+  group_by(C_COW_ALPHA) %>% 
+  summarise(soma_n_confiam = sum(n_confia_na_imp), 
+            total_entrevistados = n(),
+            prop = round(soma_n_confiam/total_entrevistados * 100, 2)) %>% 
+  arrange(desc(prop)) %>% 
+  slice(1)
+
+est_imprensa <- prop.test(imprensa$soma_n_confiam, imprensa$total_entrevistados, .5)
+
+```
+
+3. Escreva uma frase interpretando as estimativas encontradas na pergunta 2. Os valores da média e do intervalo de confiança devem ser reportados de maneira dinâmica, por meio de objetos que você criou na pergunta anterior. 
+
+O Egito é o país com maior nível de desconfiança na imprensa. Em sua amostra, `r round(est_imprensa$estimate*100, 1)`% dos entrevistados afirmam não confiar nessa instituição. Se repetíssemos essa pesquisa infinitas vezes, 95% das médias estariam entre `r round(est_imprensa$conf.int[1]*100, 1)`%  e `r round(est_imprensa$conf.int[2]*100, 1)`% da população.
+
+4. Nos modelos que rodamos durante a aula para compreender a ascensão do Partido Nazista, utilizamos o número absoluto de votos em cada distrito como variável dependente. Porém, pode-se fazer o argumento de que o mais importante é a proporção dos votos que o Partido Nazista ganhou dentro de cada distrito, e não o número total.
+
+Utilize o banco de dados para testar essa hipótese, fazendo as transformações necessárias. Os resultados são diferentes?
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+nazis <- read_csv(here("./data/nazis.csv")) %>% 
+  mutate(nazi_prop = nazivote/nvoter)
+
+m <- lm(nazi_prop ~ shareunemployed + sharewhite + shareblue + shareself, data = nazis) # rodando o modelo
+
+summ(m, confint = TRUE) # tabela de resultados
+
+plot_summs(m, scale = TRUE) # gráfico com resultados
+```
+
+
+5. Produza um documento .html com o resultado de sua análise
+
+**Observação**: Não se esqueça de colocar seu nome.
+
+
+
